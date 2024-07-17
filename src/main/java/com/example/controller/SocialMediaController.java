@@ -63,7 +63,7 @@ public class SocialMediaController {
     }
     @PostMapping("/messages")
     public ResponseEntity<?> createMessage(@RequestBody Message message){
-        if(message.getMessageText().length()>255||message.getMessageText() == null){
+        if(message.getMessageText().length()>255||message.getMessageText() == null|| message.getMessageText().isBlank()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error message creation");
         }
         if(accountService.findById(message.getPostedBy())==null){
@@ -100,7 +100,11 @@ public class SocialMediaController {
         if(newMessage.getMessageText().length()>255||newMessage.getMessageText() == null || newMessage.getMessageText().isBlank()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error updating message");
         }
-        messageService.updatMessage(newMessage);
+        messageService.updateMessage(newMessage);
         return ResponseEntity.ok(1);
+    }
+    @GetMapping("/accounts/{accountId}/messages")
+    public ResponseEntity<List<Message>> getMessagesByUser(@PathVariable Integer accountId){
+        return ResponseEntity.ok(messageService.allMessagesByAccount(accountId));
     }
 }
