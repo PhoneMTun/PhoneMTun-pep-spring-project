@@ -50,17 +50,17 @@ public class SocialMediaController {
 
     }
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Account account){
-        Optional<Account> existingAccount = accountService.findByUsername(account.getUsername()); 
-        if(!existingAccount.isPresent()){
+    public ResponseEntity<?> login(@RequestBody Account account) {
+        Optional<Account> existingAccount = accountService.findByUsername(account.getUsername());
+        if (!existingAccount.isPresent()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Account does not exist");
         }
-        if (existingAccount.get().getPassword()!=account.getPassword()){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Account does not exist");
-        } 
+        if (!existingAccount.get().getPassword().equals(account.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
+        }
         return ResponseEntity.ok(existingAccount.get());
-
     }
+
     @PostMapping("/messages")
     public ResponseEntity<?> createMessage(@RequestBody Message message){
         if(message.getMessageText().length()>255||message.getMessageText() == null|| message.getMessageText().isBlank()){
