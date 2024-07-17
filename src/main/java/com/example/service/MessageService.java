@@ -22,4 +22,10 @@ public class MessageService{
     public Optional<Message> getMessageByid(Integer id){
         return messageRepository.findById(id);
     }
+    public void deleteMessage(Message message){
+        messageRepository.delete(message);
+    }
+    public Message updatMessage(Message message){
+        return messageRepository.save(message);
+    }
 }

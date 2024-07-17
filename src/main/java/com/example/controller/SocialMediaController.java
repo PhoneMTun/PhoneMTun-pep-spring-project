@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -78,5 +80,27 @@ public class SocialMediaController {
     public ResponseEntity<Message> getMessagesById(@PathVariable Integer messageId){
         Optional<Message> message = messageService.getMessageByid(messageId);
         return message.isPresent()? ResponseEntity.ok(message.get()): ResponseEntity.ok(null);
+    }
+    @DeleteMapping("/messages/{messageId}")
+    public ResponseEntity<?> deleteMessagesById(@PathVariable Integer messageId){
+        Optional<Message> message = messageService.getMessageByid(messageId);
+        if(message.isPresent()){
+            messageService.deleteMessage(message.get());
+            return ResponseEntity.ok(1);
+        }else{
+            return ResponseEntity.ok().build();
+        }
+    }
+    @PatchMapping("/messages/{messageId}")
+    public ResponseEntity<?> updateMessagesById(@PathVariable Integer messageId, @RequestBody Message newMessage){
+        Optional<Message> potentialMessage = messageService.getMessageByid(messageId);
+        if(!potentialMessage.isPresent() ){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message does not exist");
+        }
+        if(newMessage.getMessageText().length()>255||newMessage.getMessageText() == null || newMessage.getMessageText().isBlank()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error updating message");
+        }
+        messageService.updatMessage(newMessage);
+        return ResponseEntity.ok(1);
     }
 }
